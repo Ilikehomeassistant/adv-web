@@ -9,24 +9,30 @@
   <style>
     html, body { margin: 0; height: 100%; background: #161616; overflow: hidden; }
     body { color: #929292; font: 12px/1.4 monospace; user-select: none; -webkit-user-select: none; }
-    #screen { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; display: none; }
+    canvas { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; display: none; }
+    #drag { pointer-events: none; z-index: 2; opacity: 0.95; }
     #bar { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; display: flex; gap: 14px;
            align-items: center; justify-content: center; }
     #bar button { font: inherit; color: #ffffff; background: #494949; border: 0; padding: 5px 10px; cursor: pointer; }
     #bar button:hover { background: #6d6d6d; }
     #message { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
-    #drop { position: absolute; inset: 0; border: 4px dashed #ffe14d; display: none; pointer-events: none; }
-    @media (max-width: 640px) { #keys { display: none; } }
+    #drop { position: absolute; inset: 0; border: 4px dashed #ffe14d; display: none; pointer-events: none; z-index: 3; }
+    .phone .pc-only, .pc .phone-only { display: none; }
+    @media (max-width: 640px) { .keys { display: none; } }
   </style>
 </head>
 <body>
   <canvas id="screen"></canvas>
+  <canvas id="console"></canvas>
+  <canvas id="library"></canvas>
+  <canvas id="drag"></canvas>
   <div id="message">LOADING ADV...</div>
   <div id="drop"></div>
   <div id="bar">
     <button id="open">OPEN A CART PICTURE</button>
-    <span id="keys">ARROWS &middot; Z = A &middot; X = B &middot; ENTER = START &middot; SHIFT = SELECT</span>
-    <input id="file" type="file" accept="image/*,.adv" hidden>
+    <span class="keys phone-only">ARROWS &middot; Z = A &middot; X = B &middot; ENTER = START &middot; SHIFT = SELECT</span>
+    <span class="keys pc-only">DRAG A CART INTO THE SLOT, TYPE RUN &middot; ARROWS, Z, X &middot; ESC STOPS A GAME</span>
+    <input id="file" type="file" accept="image/*,.adv,.advt,.lua" hidden>
   </div>
   <script type="module" src="main.js"></script>
 </body>
