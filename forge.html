@@ -2,81 +2,12 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#242424">
-  <title>ADV Cart Forge</title>
-  <link rel="icon" href="icon.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&amp;display=swap">
-  <link rel="stylesheet" href="style.css">
+  <title>ADV Developer Kit</title>
+  <!-- the Cart Forge is now the Developer Kit -->
+  <meta http-equiv="refresh" content="0; url=devkit.html">
+  <link rel="canonical" href="devkit.html">
 </head>
-<body data-app="forge">
-  <header class="top">
-    <div class="inner">
-      <img class="logo" src="logo.png" alt="ADV">
-      <div class="say" data-px="3">Cart Forge</div>
-      <nav><a class="btn" href="./">Back to ADV</a></nav>
-    </div>
-  </header>
-
-  <main>
-    <div id="stage">
-      <canvas id="console"></canvas>
-      <canvas id="library"></canvas>
-    </div>
-    <div class="hint" data-px="2">ESC opens the editors. CTRL+R runs your cart. Your carts stay in this browser.</div>
-    <div class="toolbar">
-      <button class="btn open">Open a cart or picture</button>
-      <button class="btn" id="download">Download as a picture</button>
-      <button class="btn loud" id="upload">Upload to ADV online</button>
-    </div>
-    <p id="note"></p>
-
-    <div class="seam"></div>
-
-    <section>
-      <h2 data-px="4">The easy way</h2>
-      <p>1. In the sprite editor, pick a sprite and click "IT IS..." to say what it is: player, enemy, collect, solid, hurts or goal.</p>
-      <p>2. Paint them on the map. 3. Press CTRL+R. That's a game!</p>
-    </section>
-    <div class="seam"></div>
-    <section>
-      <h2 data-px="4">The advanced way</h2>
-      <p>Write Lua in the code editor, make sounds and music, or mix in Scratch-style blocks. A new cart starts with a little level to play with.</p>
-    </section>
-    <div class="seam"></div>
-    <section>
-      <h2 data-px="4">Sharing it</h2>
-      <p>Upload sends your cart to ADV's online carts from your own GitHub account. The owner of ADV takes a look, and then it's on everyone's screen. No GitHub? Download the picture and share that instead.</p>
-    </section>
-  </main>
-
-  <dialog id="upload-dialog">
-    <form method="dialog">
-      <h2 data-px="4">Upload to ADV online</h2>
-      <label for="title">Game name</label>
-      <input id="title" name="title" maxlength="30" required>
-      <label for="author">Your name (everyone sees it: a nickname is good)</label>
-      <input id="author" name="author" maxlength="24">
-      <label for="about">About it</label>
-      <textarea id="about" name="about" rows="3" maxlength="200"></textarea>
-      <label for="token">Your GitHub token</label>
-      <input id="token" name="token" type="password" autocomplete="off" spellcheck="false">
-      <small>Make one <a href="https://github.com/settings/tokens/new?scopes=public_repo&amp;description=ADV%20Cart%20Forge" target="_blank" rel="noopener">here</a> (it needs "public_repo"). It only goes to GitHub.</small>
-      <div class="check"><input id="remember" name="remember" type="checkbox"><label for="remember">Remember it on this computer</label></div>
-      <div class="status"></div>
-      <div class="buttons">
-        <button type="button" class="btn cancel">Cancel</button>
-        <button type="submit" class="btn loud go">Upload</button>
-      </div>
-    </form>
-  </dialog>
-
-  <canvas id="drag"></canvas>
-  <div id="message">LOADING THE CART FORGE...</div>
-  <div id="drop"></div>
-  <input id="file" type="file" accept="image/*,.adv,.advt,.lua" hidden>
-  <script type="module" src="main.js"></script>
+<body style="background: #000; color: #dbdbdb; font-family: monospace">
+  <p>The Cart Forge is now the <a href="devkit.html" style="color: #ffe14d">Developer Kit</a>.</p>
 </body>
 </html>

@@ -2,7 +2,7 @@
 // plays its sound, and passes keys, the mouse, touches and pictures to it.
 //   the website (index.html): phones get the handheld; PCs get the desk - the console
 //     wired to a screen of online carts. Add ?mode=phone or ?mode=pc to choose.
-//   the Cart Forge (forge.html, PCs only): the console with its editors, and your carts.
+//   the Developer Kit (devkit.html, PCs only): the dev kit console, its editors, your carts.
 import { dotnet } from './_framework/dotnet.js';
 import { drawAllPixelText } from './pixelfont.js';
 
@@ -19,7 +19,7 @@ document.body.classList.add(phone ? 'phone' : 'pc');
 function say(text) { message.textContent = text; message.style.display = 'flex'; }
 window.addEventListener('error', e => say('ADV CRASHED: ' + e.message));
 window.addEventListener('unhandledrejection', e => say('ADV CRASHED: ' + e.reason));
-if (app === 'forge' && phone) { say('THE CART FORGE NEEDS A PC (A KEYBOARD AND A MOUSE).'); throw new Error('forge needs a PC'); }
+if (app === 'devkit' && phone) { say('THE DEVELOPER KIT NEEDS A PC (A KEYBOARD AND A MOUSE).'); throw new Error('the dev kit needs a PC'); }
 
 // carts are kept in the browser's local storage, so they're still there next time
 const storage = {
@@ -29,26 +29,41 @@ const storage = {
   keys() { try { return Object.keys(localStorage); } catch { return []; } },
 };
 
-// the canvases ADV draws on: 0 the handheld, 1 the console, 2 the library, 3 the desk
-const screens = [];
-let colors;
-function screen(id, width, height) {
-  const canvas = document.getElementById(id);
-  canvas.width = width;
-  canvas.height = height;
-  const draw2d = canvas.getContext('2d');
-  const image = draw2d.createImageData(width, height);
+// the one canvas ADV draws on
+const canvas = document.getElementById('screen');
+const draw2d = canvas.getContext('2d', { alpha: false });
+let W = 0, H = 0, image, pixels, indexes, colors;
+function setSize(width, height) {
+  W = width; H = height;
+  canvas.width = W;
+  canvas.height = H;
+  image = draw2d.createImageData(W, H);
+  pixels = new Uint32Array(image.data.buffer);
+  indexes = new Uint8Array(W * H);
+  indexes.fill(255); // (nothing drawn yet, so the first frame draws everything)
   canvas.style.display = 'block';
-  return { canvas, draw2d, image, pixels: new Uint32Array(image.data.buffer), indexes: new Uint8Array(width * height), width, height };
 }
 
 const { setModuleImports, getAssemblyExports, getConfig, runMain } = await dotnet.create();
+const fresh = new Uint8Array(1024 * 1024);
 setModuleImports('main.js', {
-  draw(which, view) {
-    const s = screens[which];
-    view.copyTo(s.indexes);
-    for (let i = 0; i < s.indexes.length; i++) s.pixels[i] = colors[s.indexes[i]];
-    s.draw2d.putImageData(s.image, 0, 0);
+  // only the rows that changed get turned into colors and put on the screen
+  draw(view) {
+    const now = fresh.subarray(0, W * H);
+    view.copyTo(now);
+    let first = -1, last = -1;
+    for (let y = 0; y < H; y++) {
+      const row = y * W;
+      for (let x = 0; x < W; x++) {
+        if (now[row + x] !== indexes[row + x]) {
+          if (first < 0) first = y;
+          last = y;
+          for (let i = row; i < row + W; i++) pixels[i] = colors[indexes[i] = now[i]];
+          break;
+        }
+      }
+    }
+    if (first >= 0) draw2d.putImageData(image, 0, 0, 0, first, W, last - first + 1);
   },
   keepCart(name, base64) {
     if (!storage.set('adv-cart:' + name, base64)) console.warn('no room left to keep ' + name);
@@ -65,16 +80,20 @@ const firstVisit = storage.get('adv-started') === null;
 for (const key of storage.keys())
   if (key.startsWith('adv-cart:')) adv.AddCart(key.slice(9), storage.get(key));
 storage.set('adv-started', '1');
-if (app === 'forge') startForge();
+if (app === 'devkit') startDesk(true);
 else if (phone) startPhone();
-else startDesk();
+else startDesk(false);
 message.style.display = 'none';
 
-// 60 frames a second, whatever the screen's speed
+// 60 frames a second, whatever the screen's speed (and none while the page is hidden)
 let last = performance.now(), behind = 0;
 const speed = window.advSpeed = { frames: 0, ms: 0 }; // how hard it's working (for testing)
+// (it rests while you've scrolled away to read the rest of the page)
+let onScreen = true;
+if ('IntersectionObserver' in window)
+  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }).observe(document.getElementById('stage'));
 function frame(now) {
-  behind = Math.min(behind + now - last, 100);
+  behind = onScreen ? Math.min(behind + now - last, 100) : 0;
   last = now;
   for (let steps = 0; behind >= 1000 / 60 && steps < 4; steps++) {
     const start = performance.now();
@@ -107,20 +126,14 @@ function startSound() {
 window.addEventListener('keydown', startSound);
 window.addEventListener('pointerdown', startSound);
 
-// where a pointer is on a canvas, in its pixels
-function at(s, e) {
-  const r = s.canvas.getBoundingClientRect();
-  return [Math.floor((e.clientX - r.left) * s.width / r.width), Math.floor((e.clientY - r.top) * s.height / r.height)];
+// where a pointer is on the canvas, in its pixels
+function at(e) {
+  const r = canvas.getBoundingClientRect();
+  return [Math.floor((e.clientX - r.left) * W / r.width), Math.floor((e.clientY - r.top) * H / r.height)];
 }
-function inside(s, e) {
-  const r = s.canvas.getBoundingClientRect();
-  return e.clientX >= r.left && e.clientX < r.right && e.clientY >= r.top && e.clientY < r.bottom;
-}
-function place(canvas, left, top, width, height) {
+function place(left, top, width, height) {
   Object.assign(canvas.style, { left: left + 'px', top: top + 'px', width: width + 'px', height: height + 'px' });
 }
-// a whole-number zoom when there's room, so the pixels stay even
-function evenZoom(room) { return room >= 2 ? Math.floor(room) : room; }
 
 // ---------------------------------------------------------------
 // The phone: the handheld, worked with fingers (or keys)
@@ -128,11 +141,10 @@ function evenZoom(room) { return room >= 2 ? Math.floor(room) : room; }
 
 function startPhone() {
   const BAR = 44;
-  const height = adv.StartHandheld(window.innerWidth, window.innerHeight - BAR, firstVisit);
-  const s = screens[0] = screen('screen', 160, height);
+  setSize(160, adv.StartHandheld(window.innerWidth, window.innerHeight - BAR, firstVisit));
   function fit() {
-    const scale = Math.min(window.innerWidth / 160, (window.innerHeight - BAR) / height);
-    place(s.canvas, (window.innerWidth - 160 * scale) / 2, Math.max(0, (window.innerHeight - BAR - height * scale) / 2), 160 * scale, height * scale);
+    const scale = Math.min(window.innerWidth / W, (window.innerHeight - BAR) / H);
+    place((window.innerWidth - W * scale) / 2, Math.max(0, (window.innerHeight - BAR - H * scale) / 2), W * scale, H * scale);
   }
   window.addEventListener('resize', fit);
   fit();
@@ -151,23 +163,34 @@ function startPhone() {
     });
   window.addEventListener('blur', () => { for (let b = 0; b < 8; b++) adv.Key(b, false); });
 
-  s.canvas.addEventListener('pointerdown', e => {
-    s.canvas.setPointerCapture(e.pointerId);
-    adv.Touch(e.pointerId, 0, ...at(s, e));
+  canvas.addEventListener('pointerdown', e => {
+    canvas.setPointerCapture(e.pointerId);
+    adv.Touch(e.pointerId, 0, ...at(e));
     e.preventDefault();
   });
-  s.canvas.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') adv.Touch(e.pointerId, 1, ...at(s, e)); });
+  canvas.addEventListener('pointermove', e => { if (e.buttons || e.pointerType === 'touch') adv.Touch(e.pointerId, 1, ...at(e)); });
   for (const type of ['pointerup', 'pointercancel'])
-    s.canvas.addEventListener(type, e => adv.Touch(e.pointerId, 2, 0, 0));
-  s.canvas.addEventListener('contextmenu', e => e.preventDefault());
+    canvas.addEventListener(type, e => adv.Touch(e.pointerId, 2, 0, 0));
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
 }
 
 // ---------------------------------------------------------------
-// A PC: the keyboard (game buttons for both players, and typing for the
-// terminal), and dragging a picture of a cart around with the mouse
+// A desk (the website on a PC, or the Developer Kit): one canvas, keys and the mouse
 // ---------------------------------------------------------------
 
-function pcKeyboard() {
+function startDesk(devKit) {
+  setSize(...adv.StartDesk(firstVisit, devKit));
+  const stage = document.getElementById('stage');
+  function fit() {
+    const room = Math.min(stage.clientWidth / W, window.innerHeight * 0.82 / H);
+    const zoom = room >= 2 ? Math.floor(room) : room; // a whole-number zoom when there's room, so the pixels stay even
+    stage.style.height = H * zoom + 'px';
+    place((stage.clientWidth - W * zoom) / 2, 0, W * zoom, H * zoom);
+  }
+  window.addEventListener('resize', fit);
+  fit();
+
+  // the keyboard: game buttons for both players, and typing for the terminal and the editors
   const players = [
     { ArrowLeft: 0, ArrowRight: 1, ArrowUp: 2, ArrowDown: 3, KeyZ: 4, KeyX: 5 },
     { KeyA: 0, KeyD: 1, KeyW: 2, KeyS: 3, KeyF: 4, KeyG: 5 },
@@ -192,147 +215,43 @@ function pcKeyboard() {
       if (used || name) e.preventDefault();
     });
   window.addEventListener('blur', () => players.forEach((keys, p) => { for (let b = 0; b < 6; b++) adv.GameKey(p, b, false); }));
-}
 
-const dragged = document.getElementById('drag');
-function showDragged(art, zoom) {
-  const size = Math.max(2, Math.round(zoom / 2));
-  dragged.width = 30;
-  dragged.height = 38;
-  const g = dragged.getContext('2d'), image = g.createImageData(30, 38), px = new Uint32Array(image.data.buffer);
-  art.forEach((c, i) => { px[i] = c === 16 ? 0 : colors[c]; });
-  g.putImageData(image, 0, 0);
-  dragged.style.width = 30 * size + 'px';
-  dragged.style.height = 38 * size + 'px';
-  dragged.style.display = 'block';
-}
-function moveDragged(e) {
-  const r = dragged.getBoundingClientRect();
-  dragged.style.left = e.clientX - r.width / 2 + 'px';  // held by the top middle
-  dragged.style.top = e.clientY - 6 * r.height / 38 + 'px';
-}
-const hideDragged = () => { dragged.style.display = 'none'; };
-
-// ---------------------------------------------------------------
-// The website on a PC: the desk
-// ---------------------------------------------------------------
-
-function startDesk() {
-  adv.StartDesk(firstVisit);
-  const [W, H] = adv.DeskSize();
-  const d = screens[3] = screen('desk', W, H);
-  let zoom = 1;
-  function fit() {
-    const stage = document.getElementById('stage');
-    zoom = evenZoom(Math.min(stage.clientWidth / W, window.innerHeight * 0.8 / H));
-    stage.style.height = H * zoom + 'px';
-    place(d.canvas, (stage.clientWidth - W * zoom) / 2, 0, W * zoom, H * zoom);
-  }
-  window.addEventListener('resize', fit);
-  fit();
-  pcKeyboard();
-
-  let drag = null; // the cart being dragged: "slot" or "online:N"
+  // the mouse: carts are dragged around inside the desk itself
   const buttonsOf = e => (e.buttons & 1 ? 1 : 0) | (e.buttons & 2 ? 2 : 0) | (e.buttons & 4 ? 4 : 0);
-  const where = e => inside(d, e) ? at(d, e) : [-1, -1];
-  function begin(token, e) { drag = token; showDragged(adv.DeskDragArt(token), zoom); moveDragged(e); adv.DeskDragOver(drag, ...where(e)); }
-  d.canvas.addEventListener('pointerdown', e => {
-    d.canvas.setPointerCapture(e.pointerId);
-    const token = adv.DeskMouse(0, ...at(d, e), buttonsOf(e));
-    if (token) begin(token, e);
-    e.preventDefault();
-  });
-  d.canvas.addEventListener('pointermove', e => {
-    if (drag) { moveDragged(e); adv.DeskDragOver(drag, ...where(e)); return; }
-    const token = adv.DeskMouse(1, ...at(d, e), buttonsOf(e));
-    if (token) begin(token, e);
-  });
-  d.canvas.addEventListener('pointerup', e => {
-    if (drag) { adv.DeskDrop(drag, ...where(e)); drag = null; hideDragged(); }
-    else adv.DeskMouse(2, ...at(d, e), buttonsOf(e));
-  });
-  d.canvas.addEventListener('pointercancel', () => { if (drag) { adv.DeskDrop(drag, -1, -1); drag = null; hideDragged(); } });
-  d.canvas.addEventListener('pointerleave', () => { if (!drag) adv.DeskMouse(3, 0, 0, 0); });
-  d.canvas.addEventListener('dblclick', e => adv.DeskMouse(4, ...at(d, e), 0));
-  d.canvas.addEventListener('wheel', e => {
-    adv.DeskWheel(at(d, e)[0], e.deltaY < 0 ? 1 : e.deltaY > 0 ? -1 : 0);
+  const send = (what, e) => { canvas.style.cursor = adv.DeskMouse(what, ...at(e), buttonsOf(e)) ? 'grabbing' : ''; };
+  canvas.addEventListener('pointerdown', e => { canvas.setPointerCapture(e.pointerId); send(0, e); e.preventDefault(); });
+  canvas.addEventListener('pointermove', e => send(1, e));
+  canvas.addEventListener('pointerup', e => send(2, e));
+  canvas.addEventListener('pointercancel', e => send(2, e));
+  canvas.addEventListener('pointerleave', () => adv.DeskMouse(3, 0, 0, 0));
+  canvas.addEventListener('dblclick', e => send(4, e));
+  canvas.addEventListener('wheel', e => {
+    adv.DeskWheel(...at(e), e.deltaY < 0 ? 1 : e.deltaY > 0 ? -1 : 0);
     e.preventDefault();
   }, { passive: false });
-  d.canvas.addEventListener('contextmenu', e => e.preventDefault());
-}
+  canvas.addEventListener('contextmenu', e => e.preventDefault());
 
-// ---------------------------------------------------------------
-// The Cart Forge: the console (with its editors) and your carts, side by side
-// ---------------------------------------------------------------
-
-function startForge() {
-  adv.StartConsole(firstVisit, true);
-  const con = screens[1] = screen('console', 160, 204);
-  const lib = screens[2] = screen('library', 112, 204);
-  let zoom = 1;
-  function fit() {
-    const stage = document.getElementById('stage');
-    zoom = evenZoom(Math.min(stage.clientWidth / (160 + 4 + 112), (window.innerHeight - 90) / 204));
-    stage.style.height = 204 * zoom + 'px';
-    const left = (stage.clientWidth - 276 * zoom) / 2;
-    place(con.canvas, left, 0, 160 * zoom, 204 * zoom);
-    place(lib.canvas, left + 164 * zoom, 0, 112 * zoom, 204 * zoom);
-  }
-  window.addEventListener('resize', fit);
-  fit();
-  pcKeyboard();
-
-  let drag = null; // the file of the cart being dragged
-  const buttonsOf = e => (e.buttons & 1 ? 1 : 0) | (e.buttons & 2 ? 2 : 0) | (e.buttons & 4 ? 4 : 0);
-  const target = e => inside(con, e) ? 1 : inside(lib, e) ? 2 : 0;
-  function begin(path, e) { drag = path; showDragged(adv.DragArt(path), zoom); moveDragged(e); }
-  function overNow(e) { const w = target(e); adv.DragOver(w, drag, ...at(w === 2 ? lib : con, e)); }
-  function end(w, e) { adv.DragDrop(w, drag, ...(e ? at(w === 2 ? lib : con, e) : [0, 0])); hideDragged(); drag = null; }
-  for (const s of [con, lib]) {
-    const mouse = (what, e) => s === con ? adv.ConsoleMouse(what, ...at(s, e), buttonsOf(e)) : adv.LibraryMouse(what, ...at(s, e));
-    s.canvas.addEventListener('pointerdown', e => {
-      s.canvas.setPointerCapture(e.pointerId);
-      const path = mouse(0, e);
-      if (path) begin(path, e);
-      e.preventDefault();
-    });
-    s.canvas.addEventListener('pointermove', e => {
-      if (drag) { moveDragged(e); overNow(e); return; }
-      const path = mouse(1, e);
-      if (path) begin(path, e);
-    });
-    s.canvas.addEventListener('pointerup', e => { if (drag) end(target(e), e); else mouse(2, e); });
-    s.canvas.addEventListener('pointercancel', () => { if (drag) end(0, null); });
-    s.canvas.addEventListener('wheel', e => {
-      const notches = e.deltaY < 0 ? 1 : e.deltaY > 0 ? -1 : 0;
-      if (s === con) adv.ConsoleWheel(notches); else adv.LibraryWheel(notches);
-      e.preventDefault();
-    }, { passive: false });
-    s.canvas.addEventListener('contextmenu', e => e.preventDefault());
-  }
-  lib.canvas.addEventListener('pointerleave', () => { if (!drag) adv.LibraryMouse(3, 0, 0); });
-  lib.canvas.addEventListener('dblclick', e => adv.LibraryMouse(4, ...at(lib, e)));
-
-  // download the cart you're making as an .adv picture
+  if (!devKit) return;
+  // the dev kit's buttons: download the cart you're making as a picture, or upload it
   document.getElementById('download')?.addEventListener('click', () => {
-    const made = adv.ForgePicture();
-    if (!made) { alertOnPage('MAKE OR INSERT A CART FIRST'); return; }
+    const made = adv.KitPicture();
+    if (!made) { note('MAKE OR INSERT A CART FIRST'); return; }
     const [name, data] = made.split('\n');
     const link = document.createElement('a');
     link.href = 'data:image/png;base64,' + data;
     link.download = name;
     link.click();
   });
-  import('./upload.js').then(m => m.setUp(adv, alertOnPage));
+  import('./upload.js').then(m => m.setUp(adv, note));
 }
 
-function alertOnPage(text) {
-  const note = document.getElementById('note');
-  if (!note) return;
-  note.textContent = text;
-  note.style.visibility = 'visible';
-  clearTimeout(alertOnPage.timer);
-  alertOnPage.timer = setTimeout(() => { note.style.visibility = 'hidden'; }, 4000);
+function note(text) {
+  const box = document.getElementById('note');
+  if (!box) return;
+  box.textContent = text;
+  box.style.visibility = 'visible';
+  clearTimeout(note.timer);
+  note.timer = setTimeout(() => { box.style.visibility = 'hidden'; }, 4000);
 }
 
 // ---------------------------------------------------------------

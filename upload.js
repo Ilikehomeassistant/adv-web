@@ -1,4 +1,4 @@
-// The Cart Forge's UPLOAD button: sends your cart to ADV's online carts as a pull request
+// The Developer Kit's UPLOAD button: sends your cart to ADV's online carts as a pull request
 // from YOUR OWN GitHub account. The owner of ADV looks at it, and once it's accepted it
 // shows up for everyone. Your GitHub token only ever goes to api.github.com, and it's
 // kept in this browser only if you tick "remember". Commits use GitHub's private
@@ -13,7 +13,7 @@ export function setUp(adv, note) {
   let cart = null;
 
   document.getElementById('upload').addEventListener('click', () => {
-    const info = adv.ForgeText();
+    const info = adv.KitText();
     if (!info) { note('MAKE OR INSERT A CART FIRST'); return; }
     cart = JSON.parse(info);
     field('title').value = cart.title;
@@ -113,7 +113,7 @@ export async function upload(token, cart, entry, status) {
     title: `New cart: ${entry.title}`,
     head: home === OWNER ? branch : `${home}:${branch}`,
     base: 'main',
-    body: `**${entry.title}**${entry.author ? ' by ' + entry.author : ''}\n\n${entry.about}\n\nSent from the ADV Cart Forge.`,
+    body: `**${entry.title}**${entry.author ? ' by ' + entry.author : ''}\n\n${entry.about}\n\nSent from the ADV Developer Kit.`,
   });
   return pr.html_url;
 }

@@ -4,9 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#242424">
-  <meta name="description" content="ADV: a little fantasy console. Play its carts right here, make your own in the Cart Forge, and share them as pictures.">
-  <title>ADV</title>
+  <meta name="description" content="ADV: a little fantasy console where every game is a picture. Play it here, make games in the Developer Kit, and share them.">
+  <title>ADV - a little fantasy console</title>
   <link rel="icon" href="icon.png">
+  <link rel="modulepreload" href="_framework/dotnet.js">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&amp;display=swap">
@@ -16,61 +17,122 @@
   <header class="top pc-only">
     <div class="inner">
       <img class="logo" src="logo.png" alt="ADV">
-      <div class="say" data-px="3">A little fantasy console. Games are pictures.</div>
+      <div class="say" data-px="2">A little fantasy console</div>
+      <nav>
+        <a href="#emulator" data-px="2">Play</a>
+        <a href="#about" data-px="2">About</a>
+        <a href="#specs" data-px="2">Specs</a>
+        <a href="#word" data-px="2">My word</a>
+        <a href="#downloads" data-px="2">Downloads</a>
+      </nav>
       <img class="zx" src="stripes.png" alt="">
     </div>
   </header>
 
   <main>
-    <div id="stage">
-      <canvas id="screen"></canvas>
-      <canvas id="desk"></canvas>
-    </div>
-    <div class="hint pc-only" data-px="2">Click a cart on the screen, then type RUN. Arrows, Z and X play. ESC stops.</div>
-
-    <div class="seam pc-only"></div>
-
-    <section class="carts pc-only">
-      <a class="cart" href="https://github.com/Ilikehomeassistant/adv-web/releases/latest/download/ADV-Windows.zip">
-        <div class="label">
-          <b data-px="4">ADV for Windows</b>
-          <p>The whole console: the cart library, the editors, the lot.</p>
-          <small>Unzip it, run ADV.exe. If Windows asks: "More info", then "Run anyway".</small>
-          <div class="stripe"></div>
-        </div>
-      </a>
-      <a class="cart" href="https://github.com/Ilikehomeassistant/adv-web/releases/latest/download/ADV-Android.apk">
-        <div class="label">
-          <b data-px="4">ADV for Android</b>
-          <p>A Game Boy-style handheld for playing carts on your phone.</p>
-          <small>Open the file on your phone and let it install.</small>
-          <div class="stripe"></div>
-        </div>
-      </a>
-      <a class="cart forge" href="forge.html">
-        <div class="label">
-          <b data-px="4">The Cart Forge</b>
-          <p>Make your own carts right here, then send them to ADV online.</p>
-          <small>Easy: say what each sprite is and paint a map. Or write Lua.</small>
-          <div class="stripe"></div>
-        </div>
-      </a>
+    <section id="emulator">
+      <h2 class="pc-only"><img src="icon-emulator.png" alt=""><span data-px="4">Emulator</span></h2>
+      <div id="stage"><canvas id="screen"></canvas></div>
+      <div class="hint pc-only" data-px="2">Click a cart on the screen, then type RUN. Arrows, Z and X play. ESC stops.</div>
     </section>
 
-    <div class="seam pc-only"></div>
+    <section id="about" class="pc-only">
+      <h2><img src="icon-about.png" alt=""><span data-px="4">About</span></h2>
+      <p>ADV is a little fantasy console: a pretend games machine with tiny limits that make games fun to make and fun to play. It has a 128 by 128 pixel screen in 24 colors, four channels of chip sound, two players, and a little green LCD on top that games can draw on too.</p>
+      <p>Games come on cartridges, and every cartridge is a picture: a colorful square that looks a bit like a QR code, with the whole game hidden inside it. Share one like any other picture and anyone can play it, right here, on Windows, or on an Android phone. Making games is part of the console too: the Developer Kit has editors for code, sprites, maps, sounds and music, and when your game is done you can send it to ADV online for everyone to play.</p>
+    </section>
 
-    <section class="pc-only">
-      <h2 data-px="4">Share a cart</h2>
-      <p>Every ADV cart is a picture. Send one to a friend, and they can open it here, in the app, or even from a photo of it.</p>
-      <p style="margin-top: 18px"><button class="btn open">Open a cart picture</button></p>
+    <section id="specs" class="pc-only">
+      <h2><img src="icon-specs.png" alt=""><span data-px="4">Specs</span></h2>
+      <div class="lcd pixel-box"><div class="lcd-glass">
+        <div class="lcd-row"><span data-px="2">Screen</span><span data-px="2">128 x 128 pixels, 24 colors</span></div>
+        <div class="lcd-row"><span data-px="2">Aux screen</span><span data-px="2">72 x 18, four-shade green LCD</span></div>
+        <div class="lcd-row"><span data-px="2">Sprites</span><span data-px="2">256 of 8 x 8, with 8 flags each</span></div>
+        <div class="lcd-row"><span data-px="2">Map</span><span data-px="2">128 x 64 tiles</span></div>
+        <div class="lcd-row"><span data-px="2">Sound</span><span data-px="2">4 channels, 8 waves, 8 effects</span></div>
+        <div class="lcd-row"><span data-px="2">Music</span><span data-px="2">64 sounds of 32 notes, 64 patterns</span></div>
+        <div class="lcd-row"><span data-px="2">Code</span><span data-px="2">Lua, blocks, or the game kit</span></div>
+        <div class="lcd-row"><span data-px="2">Players</span><span data-px="2">2, six buttons each, and a mouse</span></div>
+        <div class="lcd-row"><span data-px="2">Speed</span><span data-px="2">60 frames a second</span></div>
+        <div class="lcd-row"><span data-px="2">Carts</span><span data-px="2">pictures (.adv), text (.advt), Lua</span></div>
+        <div class="lcd-row"><span data-px="2">Runs on</span><span data-px="2">Windows, Android and the web</span></div>
+      </div></div>
+
+      <h3 data-px="3">How it works</h3>
+      <p>Every frame, sixty times a second, ADV runs your game's Lua: _update moves things about, and _draw paints the 128 x 128 screen. A little sound chip mixes four channels of triangle, square, saw, noise and more, with slides, vibrato and arpeggios. A game's sprites, map, sounds and music all live in its cart, right next to its code.</p>
+      <p>To make a cart picture, ADV squashes the game, adds error correction (the same trick QR codes use, so a smudge or a wobbly photo doesn't spoil it), and paints it as squares of eight bright colors, with a color key around the edge. Reading it back finds the corner markers, even in a photo taken at an angle, and turns the colors back into the game. This web version is the very same code as the Windows and Android apps, running in your browser.</p>
+    </section>
+
+    <section id="word" class="pc-only">
+      <h2><img src="icon-word.png" alt=""><span data-px="4">My word</span></h2>
+      <div class="note-card pixel-box">
+        <p>Hi! I'm atomicdude Creator of the ADV fantasy console. This is sorta my... magnum opus project (so far).</p>
+        <p>I took a lot of inspiration from the <a href="https://www.lexaloffle.com/pico-8.php" target="_blank" rel="noopener">pico-8</a> Which is an amazing console by lexaloffle.</p>
+        <p>My website is <a href="https://atomicunwasteland.neocities.org" target="_blank" rel="noopener">https://atomicunwasteland.neocities.org</a></p>
+        <p>I'm really proud of this project and I am going to keep working on it</p>
+        <p>Anyways not much else to say, Just enjoy the ADV and keep looking out for updates!!</p>
+        <p class="sign" data-px="3">--Atomicdude</p>
+        <div class="stripe"></div>
+      </div>
+    </section>
+
+    <section id="downloads" class="pc-only">
+      <h2><img src="icon-downloads.png" alt=""><span data-px="4">Downloads</span></h2>
+      <div class="carts">
+        <a class="cart" href="https://github.com/Ilikehomeassistant/adv-web/releases/latest/download/ADV-Windows.zip">
+          <div class="label">
+            <b data-px="3">ADV for Windows</b>
+            <p>The console and its cart library, with the online carts.</p>
+            <small>Unzip it, run ADV.exe. If Windows asks: "More info", then "Run anyway".</small>
+            <div class="stripe"></div>
+          </div>
+        </a>
+        <a class="cart" href="https://github.com/Ilikehomeassistant/adv-web/releases/latest/download/ADV-Android.apk">
+          <div class="label">
+            <b data-px="3">ADV for Android</b>
+            <p>A Game Boy-style handheld for playing carts on your phone.</p>
+            <small>Open the file on your phone and let it install.</small>
+            <div class="stripe"></div>
+          </div>
+        </a>
+        <a class="cart dev" href="https://github.com/Ilikehomeassistant/adv-web/releases/latest/download/ADV-DevKit-Windows.zip">
+          <div class="label">
+            <span class="tag" data-px="2">Dev kit</span>
+            <b data-px="3">Dev Kit for PC</b>
+            <p>The Developer Kit on Windows: every editor, your carts, the online carts.</p>
+            <small>Unzip it, run "ADV DevKit.exe".</small>
+            <div class="stripe"></div>
+          </div>
+        </a>
+        <a class="cart dev" href="devkit.html">
+          <div class="label">
+            <span class="tag" data-px="2">Dev kit</span>
+            <b data-px="3">Dev Kit online</b>
+            <p>Make games right here in the browser, then send them to ADV online.</p>
+            <small>Easy: say what each sprite is and paint a map. Or write Lua.</small>
+            <div class="stripe"></div>
+          </div>
+        </a>
+      </div>
+      <h3 data-px="3">Got a cart picture?</h3>
+      <p>Open it here (or drop it on the page) and it goes straight into the slot.</p>
+      <p><button class="btn open">Open a cart picture</button></p>
     </section>
   </main>
+
+  <footer class="pc-only">
+    <div class="inner">
+      <img src="logo.png" alt="ADV" style="width: 60px; height: 20px">
+      <span data-px="2">Made by atomicdude</span>
+      <a href="https://github.com/Ilikehomeassistant/adv-carts" data-px="2">The carts on GitHub</a>
+      <img class="zx" src="stripes.png" alt="">
+    </div>
+  </footer>
 
   <div id="bar" class="phone-only">
     <button class="btn open">Open a picture</button>
     <a class="btn" href="https://github.com/Ilikehomeassistant/adv-web/releases/latest/download/ADV-Android.apk">Get the app</a>
   </div>
-  <canvas id="drag"></canvas>
   <div id="message">LOADING ADV...</div>
   <div id="drop"></div>
   <input id="file" type="file" accept="image/*,.adv,.advt,.lua" hidden>
