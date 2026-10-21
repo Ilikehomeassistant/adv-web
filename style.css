@@ -97,6 +97,7 @@ section p { color: var(--pale); max-width: 860px; margin: 0 0 14px; }
 .cart .label b { display: block; color: var(--black); margin-bottom: 12px; }
 .cart .label p { margin: 0 0 8px; color: var(--body); font-size: 16px; }
 .cart .label small { display: block; color: var(--shell); font-size: 16px; margin-bottom: 14px; line-height: 1.5; }
+.cart .cart-icon { float: right; width: 40px; height: 40px; margin: -4px -2px 0 8px; image-rendering: auto; }
 .cart .tag { display: inline-block; background: var(--yellow); color: var(--black); padding: 0 6px; margin-bottom: 10px; }
 .stripe { height: 12px; margin: 0 -14px;
           background: linear-gradient(90deg, var(--red) 0 25%, var(--yellow) 25% 50%, var(--green) 50% 75%, var(--cyan) 75%); }
