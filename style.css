@@ -93,6 +93,13 @@ section p { color: var(--pale); max-width: 860px; margin: 0 0 14px; }
             inset calc(-1 * var(--px)) 0 0 var(--lit), inset 0 calc(-1 * var(--px)) 0 var(--lit); }
 .cart.dev::before { background: repeating-linear-gradient(to bottom, var(--lit) 0 var(--px), transparent var(--px) 8px); }
 .cart .label { background: var(--label); padding: 16px 14px 0; }
+/* dev carts: a window onto the bare circuit board inside, and jumper wires trailing out of the bottom */
+.cart.dev .board { height: 56px; margin-bottom: 12px; image-rendering: pixelated;
+                   background: url(devcart-board.png) left center / 160px 56px repeat-x;
+                   box-shadow: inset 0 0 0 var(--px) var(--lit), inset 0 0 0 calc(2 * var(--px)) var(--black); }
+.cart.dev::after { content: ''; position: absolute; right: 22px; top: 100%; width: 78px; height: 120px;
+                   background: url(devcart-wires.png) 0 0 / 78px 120px no-repeat; image-rendering: pixelated; pointer-events: none; }
+.carts { padding-bottom: 110px; }
 .cart.dev .label { background: var(--white); }
 .cart .label b { display: block; color: var(--black); margin-bottom: 12px; }
 .cart .label p { margin: 0 0 8px; color: var(--body); font-size: 16px; }
