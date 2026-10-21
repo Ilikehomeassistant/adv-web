@@ -11,11 +11,12 @@ export function setUp(adv, note) {
   const field = name => form.elements.namedItem(name);
   const status = text => { form.querySelector('.status').innerHTML = text; };
   let cart = null;
+  let finish = null; // tells the console's UPLOAD command how it went
+  const done = text => { if (finish) { finish(text); finish = null; } };
 
-  document.getElementById('upload').addEventListener('click', () => {
-    const info = adv.KitText();
-    if (!info) { note('MAKE OR INSERT A CART FIRST'); return; }
-    cart = JSON.parse(info);
+  function ask(json) {
+    done('UPLOAD CANCELLED');
+    cart = JSON.parse(json);
     field('title').value = cart.title;
     field('author').value = cart.author;
     field('about').value = cart.about;
@@ -24,9 +25,17 @@ export function setUp(adv, note) {
     field('token').value = saved ?? '';
     field('remember').checked = saved !== null;
     status('');
-    dialog.showModal();
+    if (!dialog.open) dialog.showModal();
+    return new Promise(resolve => { finish = resolve; });
+  }
+
+  document.getElementById('upload').addEventListener('click', () => {
+    const info = adv.KitText();
+    if (!info) { note('MAKE OR INSERT A CART FIRST'); return; }
+    ask(info);
   });
   form.querySelector('.cancel').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => done('UPLOAD CANCELLED'));
 
   form.addEventListener('submit', async e => {
     e.preventDefault();
@@ -45,11 +54,13 @@ export function setUp(adv, note) {
     try {
       const url = await upload(token, cart, entry, status);
       status(`SENT! THE OWNER OF ADV WILL TAKE A LOOK. <a href="${url}" target="_blank" rel="noopener">SEE YOUR CART'S PAGE</a>`);
+      done('SENT TO ADV-NET! IT GOES ONLINE ONCE IT IS OKAYED');
     } catch (problem) {
       status('THAT DIDN\'T WORK: ' + String(problem.message ?? problem).toUpperCase());
     }
     form.querySelector('.go').disabled = false;
   });
+  return { ask };
 }
 
 function base64Text(text) {

@@ -46,6 +46,7 @@ function setSize(width, height) {
 
 const { setModuleImports, getAssemblyExports, getConfig, runMain } = await dotnet.create();
 const fresh = new Uint8Array(1024 * 1024);
+let uploader = null; // (the dev kit) the upload form, once it's loaded
 setModuleImports('main.js', {
   // only the rows that changed get turned into colors and put on the screen
   draw(view) {
@@ -69,6 +70,11 @@ setModuleImports('main.js', {
     if (!storage.set('adv-cart:' + name, base64)) console.warn('no room left to keep ' + name);
   },
   forgetCart(name) { storage.remove('adv-cart:' + name); },
+  // the dev kit's modem: typing UPLOAD opens the upload form with the cart in the slot
+  async uploadCart(json) {
+    if (!uploader) return 'NO MODEM ON THIS PAGE';
+    return (await uploader).ask(json);
+  },
 });
 const exports = await getAssemblyExports(getConfig().mainAssemblyName);
 const adv = window.adv = exports.Adv.WebPlayer;
@@ -242,7 +248,7 @@ function startDesk(devKit) {
     link.download = name;
     link.click();
   });
-  import('./upload.js').then(m => m.setUp(adv, note));
+  uploader = import('./upload.js').then(m => m.setUp(adv, note));
 }
 
 function note(text) {
