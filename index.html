@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#161616">
+  <title>ADV</title>
+  <link rel="icon" href="icon.png">
+  <style>
+    html, body { margin: 0; height: 100%; background: #161616; overflow: hidden; }
+    body { color: #929292; font: 12px/1.4 monospace; user-select: none; -webkit-user-select: none; }
+    #screen { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; display: none; }
+    #bar { position: absolute; left: 0; right: 0; bottom: 0; height: 30px; display: flex; gap: 14px;
+           align-items: center; justify-content: center; }
+    #bar button { font: inherit; color: #ffffff; background: #494949; border: 0; padding: 5px 10px; cursor: pointer; }
+    #bar button:hover { background: #6d6d6d; }
+    #message { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center; }
+    #drop { position: absolute; inset: 0; border: 4px dashed #ffe14d; display: none; pointer-events: none; }
+    @media (max-width: 640px) { #keys { display: none; } }
+  </style>
+</head>
+<body>
+  <canvas id="screen"></canvas>
+  <div id="message">LOADING ADV...</div>
+  <div id="drop"></div>
+  <div id="bar">
+    <button id="open">OPEN A CART PICTURE</button>
+    <span id="keys">ARROWS &middot; Z = A &middot; X = B &middot; ENTER = START &middot; SHIFT = SELECT</span>
+    <input id="file" type="file" accept="image/*,.adv" hidden>
+  </div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
