@@ -4,6 +4,9 @@
 //     wired to a screen of online carts. Add ?mode=phone or ?mode=pc to choose.
 //   the Cart Forge (forge.html, PCs only): the console with its editors, and your carts.
 import { dotnet } from './_framework/dotnet.js';
+import { drawAllPixelText } from './pixelfont.js';
+
+drawAllPixelText(); // headings and labels in ADV's own lettering
 
 const app = document.body.dataset.app ?? 'site';
 const message = document.getElementById('message');
@@ -124,7 +127,7 @@ function evenZoom(room) { return room >= 2 ? Math.floor(room) : room; }
 // ---------------------------------------------------------------
 
 function startPhone() {
-  const BAR = 34;
+  const BAR = 44;
   const height = adv.StartHandheld(window.innerWidth, window.innerHeight - BAR, firstVisit);
   const s = screens[0] = screen('screen', 160, height);
   function fit() {
@@ -216,13 +219,14 @@ const hideDragged = () => { dragged.style.display = 'none'; };
 
 function startDesk() {
   adv.StartDesk(firstVisit);
-  const d = screens[3] = screen('desk', 424, 204);
+  const [W, H] = adv.DeskSize();
+  const d = screens[3] = screen('desk', W, H);
   let zoom = 1;
   function fit() {
     const stage = document.getElementById('stage');
-    zoom = evenZoom(Math.min(stage.clientWidth / 424, window.innerHeight * 0.74 / 204));
-    stage.style.height = 204 * zoom + 'px';
-    place(d.canvas, (stage.clientWidth - 424 * zoom) / 2, 0, 424 * zoom, 204 * zoom);
+    zoom = evenZoom(Math.min(stage.clientWidth / W, window.innerHeight * 0.8 / H));
+    stage.style.height = H * zoom + 'px';
+    place(d.canvas, (stage.clientWidth - W * zoom) / 2, 0, W * zoom, H * zoom);
   }
   window.addEventListener('resize', fit);
   fit();
