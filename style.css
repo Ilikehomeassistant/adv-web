@@ -1,0 +1,68 @@
+/* ADV's website and Cart Forge: dark, chunky and pixel-y, in ADV's own colors */
+:root {
+  --bg: #000000; --panel: #242424; --panel-2: #494949; --ink: #dbdbdb; --dim: #929292;
+  --yellow: #ffe14d; --red: #ff004d; --green: #2fa84f; --cyan: #3ee6e6;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; background: var(--bg); color: var(--ink); }
+body { font: 13px/1.5 ui-monospace, "Cascadia Mono", Consolas, monospace; text-transform: uppercase; letter-spacing: 0.04em; }
+a { color: var(--yellow); }
+canvas { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; display: none; }
+#drag { position: fixed; pointer-events: none; z-index: 5; }
+#message { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center;
+           padding: 16px; background: var(--bg); z-index: 4; }
+#drop { position: fixed; inset: 0; border: 4px dashed var(--yellow); display: none; pointer-events: none; z-index: 6; }
+.phone .pc-only, .pc .phone-only { display: none !important; }
+
+/* the top of the page */
+header.top { display: flex; align-items: center; gap: 14px; max-width: 1240px; margin: 0 auto; padding: 18px 16px 10px; }
+header.top img { width: 40px; height: 40px; image-rendering: pixelated; }
+header.top h1 { margin: 0; font-size: 28px; letter-spacing: 0.2em; color: #fff; }
+header.top p { margin: 0; color: var(--dim); flex: 1; }
+.stripes { width: 64px; height: 22px; background: linear-gradient(115deg,
+  transparent 0 20%, var(--red) 20% 35%, var(--yellow) 35% 50%, var(--green) 50% 65%, var(--cyan) 65% 80%, transparent 80%); }
+header.top nav a { color: var(--ink); text-decoration: none; padding: 6px 10px; background: var(--panel); }
+header.top nav a:hover { background: var(--panel-2); }
+
+main { max-width: 1240px; margin: 0 auto; padding: 0 16px 40px; }
+#stage { position: relative; width: 100%; }
+.hint { text-align: center; color: var(--dim); margin: 12px 0 28px; }
+
+/* download and forge cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; }
+.card { display: block; padding: 16px 18px; background: var(--panel); color: var(--ink); text-decoration: none;
+        border: 2px solid var(--panel-2); box-shadow: 0 4px 0 #000, 0 4px 0 2px var(--panel-2); }
+.card:hover { border-color: var(--yellow); }
+.card b { display: block; font-size: 16px; color: #fff; margin-bottom: 6px; }
+.card span { display: block; color: var(--ink); }
+.card small { display: block; color: var(--dim); margin-top: 10px; font-size: 11px; }
+.card.forge b { color: var(--yellow); }
+section h2 { font-size: 15px; color: #fff; margin: 34px 0 8px; letter-spacing: 0.15em; }
+section p { color: var(--dim); max-width: 760px; margin: 6px 0; }
+button { font: inherit; text-transform: inherit; letter-spacing: inherit; color: #fff; background: var(--panel-2); border: 0;
+         padding: 7px 12px; cursor: pointer; }
+button:hover { background: #6d6d6d; }
+button.loud { background: var(--yellow); color: #000; }
+button.loud:hover { background: #fff; }
+
+/* the phone: the handheld fills the screen, with a little bar underneath */
+.phone, .phone body { overflow: hidden; height: 100%; }
+.phone #stage { position: fixed; inset: 0 0 34px 0; }
+.phone main { padding: 0; }
+#bar { position: fixed; left: 0; right: 0; bottom: 0; height: 34px; display: flex; gap: 10px; align-items: center; justify-content: center; }
+#bar a { color: var(--ink); background: var(--panel-2); padding: 7px 12px; text-decoration: none; }
+
+/* the Cart Forge */
+.toolbar { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; margin: 12px 0 6px; }
+#note { visibility: hidden; text-align: center; color: var(--yellow); min-height: 1.5em; }
+dialog { background: var(--panel); color: var(--ink); border: 2px solid var(--yellow); padding: 20px 22px; max-width: 520px; }
+dialog::backdrop { background: rgba(0, 0, 0, 0.75); }
+dialog h2 { margin: 0 0 10px; color: #fff; font-size: 16px; }
+dialog label { display: block; margin: 10px 0 2px; color: var(--dim); }
+dialog input, dialog textarea { width: 100%; font: inherit; text-transform: none; background: #000; color: #fff;
+                                border: 1px solid var(--panel-2); padding: 6px; }
+dialog .check { display: flex; gap: 8px; align-items: center; }
+dialog .check input { width: auto; }
+dialog .buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 16px; }
+dialog .status { margin-top: 12px; color: var(--yellow); min-height: 1.5em; }
+dialog small { color: var(--dim); }
