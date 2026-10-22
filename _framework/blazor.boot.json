@@ -1,7 +1,7 @@
 {
   "mainAssemblyName": "ADV",
   "resources": {
-    "hash": "sha256-Aes0YaeFa06QSPYFnLEDYFcLadYbER2Vu00INW0hOtM=",
+    "hash": "sha256-DHqef8sKWg3A97ojiesNx8522F4M63YzXzxXV6E/jdE=",
     "jsModuleNative": {
       "dotnet.native.8.0.32.0kaykccynv.js": "sha256-6mDkQm8wcqsePLieS1uDjmZJGTlxyzuaoKrjt7Rlztk="
     },
@@ -12,7 +12,7 @@
       "dotnet.native.wasm": "sha256-qR9kvxpEvxj7TYOpJNt6rsgTn3ir9q+4nBKQBSHAgNM="
     },
     "assembly": {
-      "ADV.wasm": "sha256-L7AT4ShAfE/AfIITZj9LMZbsgJgKlMiSpH2NisBOry0=",
+      "ADV.wasm": "sha256-6vEgvthaYxo/GDXLWIo4x2eaTtwlbAhg94Siebecebg=",
       "Microsoft.VisualBasic.Core.wasm": "sha256-ILv/8OClX8yLwaISfWpFFzCmYQXKswFGnKkFG7A5BtE=",
       "MoonSharp.Interpreter.wasm": "sha256-igbZovcHn9/pY+ork5++CIYD/muem54+UeRvp5u47ss=",
       "System.Collections.Concurrent.wasm": "sha256-SZ8+EnidH/rZH1RGfSG6CdZVgV1PS4Ra7OKXbujEgmI=",

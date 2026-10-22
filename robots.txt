@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://ilikehomeassistant.github.io/adv-web/sitemap.xml
