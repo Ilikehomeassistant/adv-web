@@ -21,6 +21,14 @@ Open the **[Developer Kit](https://ilikehomeassistant.github.io/adv-web/devkit.h
 
 ADV for **Windows**, the **Developer Kit** for Windows, and ADV for **Android** are on the [releases page](https://github.com/Ilikehomeassistant/adv-web/releases/latest). Free.
 
+## Link to ADV
+
+Got a website? Here's a button: ![ADV 88x31 button](adv88x31.png)
+
+```html
+<a href="https://ilikehomeassistant.github.io/adv-web/"><img src="https://ilikehomeassistant.github.io/adv-web/adv88x31.png" width="88" height="31" alt="ADV fantasy console" style="image-rendering: pixelated"></a>
+```
+
 ## About this repo
 
 This is the built website. On a PC you get the desk (the console wired to a screen of online carts), and on a phone the handheld. Add `?mode=phone` or `?mode=pc` to choose.
