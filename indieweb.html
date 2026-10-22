@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#242424">
+  <title>ADV for Indie Web Sites</title>
+  <meta name="description" content="Put ADV on your own website: an 88x31 button that links to ADV, or ADV Lite, a little handheld that plays ADV's online games. Copy, paste, done.">
+  <link rel="canonical" href="https://ilikehomeassistant.github.io/adv-web/indieweb.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ADV">
+  <meta property="og:title" content="ADV for indie web sites">
+  <meta property="og:description" content="An 88x31 button and ADV Lite, a little handheld of ADV's online games, for your own site. Copy, paste, done.">
+  <meta property="og:url" content="https://ilikehomeassistant.github.io/adv-web/indieweb.html">
+  <meta property="og:image" content="https://ilikehomeassistant.github.io/adv-web/og.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="icon.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen&amp;display=swap">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="indieweb">
+  <header class="top">
+    <div class="inner">
+      <img class="logo" src="logo.png" alt="ADV">
+      <span class="badge" data-px="2">Indie web</span>
+      <div class="say" data-px="2">For your site</div>
+      <nav>
+        <a href="#button" data-px="2">88x31</a>
+        <a href="#lite" data-px="2">ADV Lite</a>
+        <a href="./" data-px="2">Back to ADV</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section>
+      <p>Got a little website of your own, on Neocities or anywhere else? Here are two ways to put ADV on it. Copy the code, paste it into your page's HTML, and that's it: no sign-up, nothing to download.</p>
+    </section>
+
+    <section id="button">
+      <h2><img src="icon-emulator.png" alt=""><span data-px="4">An 88x31 button</span></h2>
+      <p>The classic little web button. It links to ADV, so people on your site can find it.</p>
+      <div class="showcase"><a href="./"><img src="adv88x31.png" width="176" height="62" alt="ADV fantasy console"></a></div>
+      <div class="snippet">
+        <textarea readonly rows="3" id="button-code">&lt;a href="https://ilikehomeassistant.github.io/adv-web/"&gt;&lt;img src="https://ilikehomeassistant.github.io/adv-web/adv88x31.png" width="88" height="31" alt="ADV fantasy console" style="image-rendering: pixelated"&gt;&lt;/a&gt;</textarea>
+        <button class="btn loud copy" data-for="button-code">Copy</button>
+      </div>
+    </section>
+
+    <section id="lite">
+      <h2><img src="icon-devcart.png" alt=""><span data-px="4">ADV Lite</span></h2>
+      <p>A little ADV handheld that lives on your page and plays ADV's online games: tap a cart and it starts. There are no editors and no saving carts to the computer: just the games. New games show up by themselves whenever someone makes one.</p>
+      <div class="lite-row">
+        <iframe class="lite-preview" src="lite.html" width="320" height="600" title="ADV Lite" loading="lazy"></iframe>
+        <div class="lite-how">
+          <h3>Copy this</h3>
+          <div class="snippet">
+            <textarea readonly rows="4" id="lite-code">&lt;iframe src="https://ilikehomeassistant.github.io/adv-web/lite.html" width="320" height="600" title="ADV Lite, a fantasy console by atomicdude" style="border: 0" loading="lazy"&gt;&lt;/iframe&gt;</textarea>
+            <button class="btn loud copy" data-for="lite-code">Copy</button>
+          </div>
+          <h3>Good to know</h3>
+          <p>Make it smaller or bigger by changing the width and height: ADV Lite fits itself into whatever space it gets. 240 x 450 is nice and small.</p>
+          <p>Click it first, then the arrow keys and Z / X work. On a phone, use its buttons.</p>
+          <p>ADV Lite always says who made ADV underneath (that's atomicdude). Please leave that in!</p>
+          <p>Want your own game in it? Make one in the <a href="devkit.html">Developer Kit</a> and send it in.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="inner">
+      <img src="logo.png" alt="ADV" style="width: 60px; height: 20px">
+      <span data-px="2">Made by atomicdude</span>
+      <a href="./" data-px="2">Play ADV</a>
+      <img class="zx" src="stripes.png" alt="">
+    </div>
+  </footer>
+
+  <script type="module">
+    import { drawAllPixelText } from './pixelfont.js';
+    drawAllPixelText();
+    // the copy buttons: put the code on the clipboard (or select it, if the browser won't)
+    for (const button of document.querySelectorAll('.copy'))
+      button.addEventListener('click', async () => {
+        const box = document.getElementById(button.dataset.for);
+        try { await navigator.clipboard.writeText(box.value); }
+        catch { box.select(); document.execCommand('copy'); }
+        button.textContent = 'Copied!';
+        setTimeout(() => { button.textContent = 'Copy'; }, 1500);
+      });
+  </script>
+</body>
+</html>

@@ -3,6 +3,7 @@
 //   the website (index.html): phones get the handheld; PCs get the desk - the console
 //     wired to a screen of online carts. Add ?mode=phone or ?mode=pc to choose.
 //   the Developer Kit (devkit.html, PCs only): the dev kit console, its editors, your carts.
+//   ADV Lite (lite.html, for other people's sites): the handheld with just the online carts.
 import { dotnet } from './_framework/dotnet.js';
 import { drawAllPixelText } from './pixelfont.js';
 
@@ -12,7 +13,7 @@ const app = document.body.dataset.app ?? 'site';
 const message = document.getElementById('message');
 const asked = new URLSearchParams(location.search).get('mode');
 const ua = navigator.userAgent;
-const phone = asked ? asked === 'phone'
+const phone = app === 'lite' || asked ? app === 'lite' || asked === 'phone'
   : /Android|iPhone|iPad|iPod|Mobile|Silk|Kindle/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
 document.body.classList.add(phone ? 'phone' : 'pc');
 
@@ -70,6 +71,12 @@ setModuleImports('main.js', {
     if (!storage.set('adv-cart:' + name, base64)) console.warn('no room left to keep ' + name);
   },
   forgetCart(name) { storage.remove('adv-cart:' + name); },
+  // what each game has saved (high scores...), as a bit of JSON
+  readSave(id) { return storage.get('adv-save:' + id); },
+  writeSave(id, json) {
+    if (json == null) storage.remove('adv-save:' + id);
+    else storage.set('adv-save:' + id, json);
+  },
   // the dev kit's modem: typing UPLOAD opens the upload form with the cart in the slot
   async uploadCart(json) {
     if (!uploader) return 'NO MODEM ON THIS PAGE';
@@ -87,6 +94,7 @@ for (const key of storage.keys())
   if (key.startsWith('adv-cart:')) adv.AddCart(key.slice(9), storage.get(key));
 storage.set('adv-started', '1');
 if (app === 'devkit') startDesk(true);
+else if (app === 'lite') startPhone(true);
 else if (phone) startPhone();
 else startDesk(false);
 message.style.display = 'none';
@@ -96,8 +104,9 @@ let last = performance.now(), behind = 0;
 const speed = window.advSpeed = { frames: 0, ms: 0 }; // how hard it's working (for testing)
 // (it rests while you've scrolled away to read the rest of the page)
 let onScreen = true;
-if ('IntersectionObserver' in window)
-  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }).observe(document.getElementById('stage'));
+const stage = document.getElementById('stage');
+if (stage && 'IntersectionObserver' in window)
+  new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }).observe(stage);
 function frame(now) {
   behind = onScreen ? Math.min(behind + now - last, 100) : 0;
   last = now;
@@ -145,9 +154,10 @@ function place(left, top, width, height) {
 // The phone: the handheld, worked with fingers (or keys)
 // ---------------------------------------------------------------
 
-function startPhone() {
-  const BAR = 44;
-  setSize(160, adv.StartHandheld(window.innerWidth, window.innerHeight - BAR, firstVisit));
+function startPhone(lite = false) {
+  const BAR = lite ? 22 : 44; // (lite: room for the credit underneath)
+  setSize(160, lite ? adv.StartLite(window.innerWidth, window.innerHeight - BAR)
+                    : adv.StartHandheld(window.innerWidth, window.innerHeight - BAR, firstVisit));
   function fit() {
     const scale = Math.min(window.innerWidth / W, (window.innerHeight - BAR) / H);
     place((window.innerWidth - W * scale) / 2, Math.max(0, (window.innerHeight - BAR - H * scale) / 2), W * scale, H * scale);
@@ -297,17 +307,19 @@ async function openFile(file) {
   }
 }
 const picker = document.getElementById('file');
-document.querySelectorAll('.open').forEach(b => b.addEventListener('click', () => picker.click()));
-picker.addEventListener('change', () => { openFile(picker.files[0]); picker.value = ''; });
 const drop = document.getElementById('drop');
-window.addEventListener('dragover', e => { e.preventDefault(); drop.style.display = 'block'; });
-window.addEventListener('dragleave', () => { drop.style.display = 'none'; });
-window.addEventListener('drop', e => {
-  e.preventDefault();
-  drop.style.display = 'none';
-  openFile(e.dataTransfer.files[0]);
-});
-window.addEventListener('paste', e => {
-  const item = [...e.clipboardData.items].find(i => i.type.startsWith('image/'));
-  if (item) openFile(item.getAsFile());
-});
+if (picker && drop) { // (not on ADV Lite: that's online carts only)
+  document.querySelectorAll('.open').forEach(b => b.addEventListener('click', () => picker.click()));
+  picker.addEventListener('change', () => { openFile(picker.files[0]); picker.value = ''; });
+  window.addEventListener('dragover', e => { e.preventDefault(); drop.style.display = 'block'; });
+  window.addEventListener('dragleave', () => { drop.style.display = 'none'; });
+  window.addEventListener('drop', e => {
+    e.preventDefault();
+    drop.style.display = 'none';
+    openFile(e.dataTransfer.files[0]);
+  });
+  window.addEventListener('paste', e => {
+    const item = [...e.clipboardData.items].find(i => i.type.startsWith('image/'));
+    if (item) openFile(item.getAsFile());
+  });
+}

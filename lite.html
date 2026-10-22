@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ADV Lite</title>
+  <meta name="description" content="ADV Lite: play the ADV fantasy console's online games on any website. ADV is made by atomicdude.">
+  <link rel="canonical" href="https://ilikehomeassistant.github.io/adv-web/lite.html">
+  <link rel="icon" href="icon.png">
+  <link rel="modulepreload" href="_framework/dotnet.js">
+  <style>
+    /* ADV Lite fills whatever frame it's put in: the handheld, and who made it underneath */
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #000; }
+    #stage { position: fixed; inset: 0 0 22px 0; }
+    #screen { position: absolute; image-rendering: pixelated; image-rendering: crisp-edges; touch-action: none; display: none; }
+    #credit { position: fixed; left: 0; right: 0; bottom: 0; height: 22px; display: flex; align-items: center; justify-content: center;
+              gap: 6px; background: #242424; border-top: 2px solid #494949; color: #b6b6b6;
+              font: 11px/1 "Courier New", monospace; letter-spacing: 1px; text-transform: uppercase; }
+    #credit a { color: #ffe14d; text-decoration: none; }
+    #credit a:hover { text-decoration: underline; }
+    #credit i { display: inline-block; width: 18px; height: 8px; font-style: normal;
+                background: linear-gradient(115deg, transparent 20%, #ff004d 20% 35%, #ffe14d 35% 50%, #2fa84f 50% 65%, #3ee6e6 65% 80%, transparent 80%); }
+    #message { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center;
+               color: #dbdbdb; font: 12px/1.6 "Courier New", monospace; padding: 16px; }
+  </style>
+</head>
+<body data-app="lite">
+  <div id="stage"><canvas id="screen"></canvas></div>
+  <div id="credit"><i></i><a href="https://ilikehomeassistant.github.io/adv-web/" target="_blank" rel="noopener">ADV</a> fantasy console by atomicdude</div>
+  <div id="message">LOADING ADV LITE...</div>
+  <script type="module" src="main.js"></script>
+</body>
+</html>

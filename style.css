@@ -143,4 +143,17 @@ dialog .buttons { display: flex; gap: 12px; justify-content: flex-end; margin-to
 dialog .status { margin-top: 14px; color: var(--yellow); min-height: 1.6em; }
 dialog small { color: var(--lit); }
 
+/* the indie web page: code to copy, the 88x31 on show, and ADV Lite running next to its code */
+.indieweb .badge { background: var(--cyan); color: var(--black); padding: 4px 8px; box-shadow: inset 0 0 0 2px var(--green); }
+.showcase { display: inline-block; background: var(--body); padding: 22px 26px; margin: 0 0 18px; }
+.showcase img { display: block; }
+.snippet { display: flex; gap: 12px; align-items: stretch; max-width: 860px; }
+.snippet textarea { flex: 1; font: 13px/1.5 ui-monospace, Consolas, monospace; background: var(--black); color: var(--lcd0); padding: 10px 12px;
+                    border: 0; box-shadow: inset 0 0 0 var(--px) var(--edge); resize: none; }
+.snippet textarea:focus { outline: none; box-shadow: inset 0 0 0 var(--px) var(--yellow); }
+.lite-row { display: flex; gap: 40px; align-items: flex-start; flex-wrap: wrap; }
+.lite-preview { border: 0; background: var(--black); box-shadow: 0 0 0 var(--px) var(--edge), 0 0 0 calc(2 * var(--px)) var(--black); max-width: 100%; }
+.lite-how { flex: 1; min-width: 280px; }
+.lite-how h3:first-child { margin-top: 0; }
+
 @media (max-width: 900px) { header.top .say, header.top .zx { display: none; } .lcd-row { grid-template-columns: 1fr; } }

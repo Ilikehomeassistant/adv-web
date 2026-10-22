@@ -29,6 +29,8 @@ Got a website? Here's a button: ![ADV 88x31 button](adv88x31.png)
 <a href="https://ilikehomeassistant.github.io/adv-web/"><img src="https://ilikehomeassistant.github.io/adv-web/adv88x31.png" width="88" height="31" alt="ADV fantasy console" style="image-rendering: pixelated"></a>
 ```
 
+Want ADV *on* your site? [ADV Lite](https://ilikehomeassistant.github.io/adv-web/indieweb.html) is a little handheld of ADV's online games that you can paste into any page.
+
 ## About this repo
 
 This is the built website. On a PC you get the desk (the console wired to a screen of online carts), and on a phone the handheld. Add `?mode=phone` or `?mode=pc` to choose.
