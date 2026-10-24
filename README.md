@@ -2,13 +2,15 @@
 
 ### ▶ Play it now: **https://ilikehomeassistant.github.io/adv-web/**
 
+### 🎉 ADV 1.0 is out: online play for up to 4! Windows, Android and the web, all in one game. [Watch the trailer](https://github.com/Ilikehomeassistant/adv-web/releases/download/v1.0/ADV-v1.0-trailer.mp4) · [What's new](https://github.com/Ilikehomeassistant/adv-web/releases/tag/v1.0)
+
 ![ADV: click a cart, it runs down the rainbow ribbon into the console, type RUN and play](demo.gif)
 
 ADV is a pretend retro games machine with tiny limits that make games fun to make and fun to play:
 
 - a **128 x 128** screen in **24 colors**, plus a little green LCD on top that games can draw on too
 - **4-channel chip sound** with slides, vibrato and arpeggios
-- **2 players** on one keyboard (or a phone, Game Boy-style)
+- **2 players** on one keyboard (or a phone, Game Boy-style), and **online play for up to 4**: host a game, send the code, play. Same Wi-Fi? No code needed.
 - games written in **Lua**, built from **Scratch-style blocks**, or made with the **game kit**: say which sprite is the player, the enemies, the coins and the walls, paint a map, and that's a game. No code needed.
 
 **Every cartridge is a picture.** A cart is a colorful square that looks a bit like a QR code, with the whole game hidden inside, error correction and all. Share it like any other picture, and anyone can drop it into ADV and play it.
