@@ -3,9 +3,12 @@
 //   the website (index.html): phones get the handheld; PCs get the desk - the console
 //     wired to a screen of online carts. Add ?mode=phone or ?mode=pc to choose.
 //   the Developer Kit (devkit.html, PCs only): the dev kit console, its editors, your carts.
-//   ADV Lite (lite.html, for other people's sites): the handheld with just the online carts.
+//   ADV Lite (lite.html, for other people's sites): just the online carts - the handheld on a
+//     phone (or in a small space), the console and its screen of online carts on a PC with room.
+//     lite.html?responsive=false: always the handheld.
 import { dotnet } from './_framework/dotnet.js';
 import { drawAllPixelText } from './pixelfont.js';
+import { link } from './link.js';
 
 drawAllPixelText(); // headings and labels in ADV's own lettering
 
@@ -13,8 +16,12 @@ const app = document.body.dataset.app ?? 'site';
 const message = document.getElementById('message');
 const asked = new URLSearchParams(location.search).get('mode');
 const ua = navigator.userAgent;
-const phone = app === 'lite' || asked ? app === 'lite' || asked === 'phone'
+const phone = asked ? asked === 'phone'
   : /Android|iPhone|iPad|iPod|Mobile|Silk|Kindle/i.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1);
+// ADV Lite on a PC with room for it (636 x 487 or more, with the credit - half as big again as the desk): the console look
+const LITE_DESK = [636, 465];
+const liteDesk = app === 'lite' && new URLSearchParams(location.search).get('responsive') !== 'false' && !phone
+  && window.innerWidth >= LITE_DESK[0] && window.innerHeight - 22 >= LITE_DESK[1];
 document.body.classList.add(phone ? 'phone' : 'pc');
 
 function say(text) { message.textContent = text; message.style.display = 'flex'; }
@@ -82,10 +89,15 @@ setModuleImports('main.js', {
     if (!uploader) return 'NO MODEM ON THIS PAGE';
     return (await uploader).ask(json);
   },
+  ...link, // online play: WebRTC (link.js)
 });
 const exports = await getAssemblyExports(getConfig().mainAssemblyName);
 const adv = window.adv = exports.Adv.WebPlayer;
 await runMain(getConfig().mainAssemblyName, []);
+// (trying out online play: ?linkdb= a pretend database on this computer, ?linkbot=host or a code to join)
+const params = new URLSearchParams(location.search);
+if (params.get('linkdb')) adv.UseTestDatabase(params.get('linkdb'));
+if (params.get('linkbot')) window.linkBotCode = adv.StartLinkBot(params.get('linkbot') === 'host', params.get('linkbot'));
 colors = Uint32Array.from(adv.Colors(), c => 0xFF000000 | (c & 255) << 16 | (c >> 8 & 255) << 8 | c >> 16 & 255);
 
 // the carts from last time, then ADV itself
@@ -94,7 +106,7 @@ for (const key of storage.keys())
   if (key.startsWith('adv-cart:')) adv.AddCart(key.slice(9), storage.get(key));
 storage.set('adv-started', '1');
 if (app === 'devkit') startDesk(true);
-else if (app === 'lite') startPhone(true);
+else if (app === 'lite') { if (liteDesk) startDesk(false, true); else startPhone(true); }
 else if (phone) startPhone();
 else startDesk(false);
 message.style.display = 'none';
@@ -107,7 +119,31 @@ let onScreen = true;
 const stage = document.getElementById('stage');
 if (stage && 'IntersectionObserver' in window)
   new IntersectionObserver(([e]) => { onScreen = e.isIntersecting; }).observe(stage);
+// game controllers: the first two are players 1 and 2 (the D-pad or left stick, A/Y = O, B/X = X)
+function readPads() {
+  const all = navigator.getGamepads ? [...navigator.getGamepads()].filter(Boolean) : [];
+  for (let p = 0; p < 2; p++) {
+    const pad = all[p];
+    let bits = 0;
+    if (pad) {
+      const b = i => pad.buttons[i]?.pressed;
+      const [ax, ay] = [pad.axes[0] ?? 0, pad.axes[1] ?? 0];
+      if (b(14) || ax < -0.4) bits |= 1;
+      if (b(15) || ax > 0.4) bits |= 2;
+      if (b(12) || ay < -0.4) bits |= 4;
+      if (b(13) || ay > 0.4) bits |= 8;
+      if (b(0) || b(3)) bits |= 16;
+      if (b(1) || b(2)) bits |= 32;
+      if (b(8)) bits |= 64;
+      if (b(9)) bits |= 128;
+    }
+    if (bits !== (readPads.last[p] ?? 0)) { adv.Pad(p, bits); readPads.last[p] = bits; }
+  }
+}
+readPads.last = [];
+
 function frame(now) {
+  readPads();
   behind = onScreen ? Math.min(behind + now - last, 100) : 0;
   last = now;
   for (let steps = 0; behind >= 1000 / 60 && steps < 4; steps++) {
@@ -194,14 +230,15 @@ function startPhone(lite = false) {
 // A desk (the website on a PC, or the Developer Kit): one canvas, keys and the mouse
 // ---------------------------------------------------------------
 
-function startDesk(devKit) {
-  setSize(...adv.StartDesk(firstVisit, devKit));
+function startDesk(devKit, lite = false) {
+  setSize(...(lite ? adv.StartLiteDesk() : adv.StartDesk(firstVisit, devKit)));
   const stage = document.getElementById('stage');
   function fit() {
-    const room = Math.min(stage.clientWidth / W, window.innerHeight * 0.82 / H);
+    // (ADV Lite fills its frame, above the credit; the website leaves room for the page below)
+    const room = Math.min(stage.clientWidth / W, (lite ? stage.clientHeight : window.innerHeight * 0.82) / H);
     const zoom = room >= 2 ? Math.floor(room) : room; // a whole-number zoom when there's room, so the pixels stay even
-    stage.style.height = H * zoom + 'px';
-    place((stage.clientWidth - W * zoom) / 2, 0, W * zoom, H * zoom);
+    if (!lite) stage.style.height = H * zoom + 'px';
+    place((stage.clientWidth - W * zoom) / 2, lite ? (stage.clientHeight - H * zoom) / 2 : 0, W * zoom, H * zoom);
   }
   window.addEventListener('resize', fit);
   fit();

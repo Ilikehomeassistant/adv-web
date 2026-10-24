@@ -4,13 +4,13 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <meta name="theme-color" content="#242424">
-  <meta name="description" content="ADV: a little fantasy console where every game is a picture. Play it here, make games in the Developer Kit, and share them.">
+  <meta name="description" content="ADV 1.0: a little fantasy console where every game is a picture - now with online play for up to 4. Play it here, make games in the Developer Kit, and share them.">
   <title>ADV - a free fantasy console: play and make retro pixel games in your browser</title>
   <link rel="canonical" href="https://ilikehomeassistant.github.io/adv-web/">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="ADV">
   <meta property="og:title" content="ADV - a little fantasy console">
-  <meta property="og:description" content="A tiny retro games machine in your browser: 128x128 pixels, chip sound, two players, and every game is a picture you can share. Free to play and to make games for.">
+  <meta property="og:description" content="ADV 1.0 is out! A tiny retro games machine in your browser: 128x128 pixels, chip sound, online play for up to 4, and every game is a picture you can share. Free to play and to make games for.">
   <meta property="og:url" content="https://ilikehomeassistant.github.io/adv-web/">
   <meta property="og:image" content="https://ilikehomeassistant.github.io/adv-web/og.png">
   <meta property="og:image:width" content="1200">
@@ -50,6 +50,7 @@
       <div class="say" data-px="2">A little fantasy console</div>
       <nav>
         <a href="#emulator" data-px="2">Play</a>
+        <a href="#new" data-px="2">New: 1.0!</a>
         <a href="#about" data-px="2">About</a>
         <a href="#specs" data-px="2">Specs</a>
         <a href="#word" data-px="2">My word</a>
@@ -65,6 +66,18 @@
       <h2 class="pc-only"><img src="icon-emulator.png" alt=""><span data-px="4">Emulator</span></h2>
       <div id="stage"><canvas id="screen"></canvas></div>
       <div class="hint pc-only" data-px="2">Click a cart on the screen, then type RUN. Arrows, Z and X play. ESC stops.</div>
+    </section>
+
+    <section id="new" class="pc-only">
+      <h2><img src="icon-emulator.png" alt=""><span data-px="4">New: ADV 1.0</span></h2>
+      <video class="trailer" src="trailer.mp4" poster="trailer.jpg" controls preload="none" playsinline title="The ADV 1.0 trailer"></video>
+      <ul class="news">
+        <li><b>Online play.</b> Up to four ADVs in one game: Windows, Android and the web, all mixed. Host a game, send your friend the code, play. On the same Wi-Fi you don't even need the code. Try it in Zap Rally, Tank Duel or Blob Bump.</li>
+        <li><b>New games:</b> Blob Bump (sumo blobs for up to four), Tank Duel, Box Shove and Road Rush.</li>
+        <li><b>More in every game:</b> arenas, power-ups, medals, modes, silver bricks and new levels.</li>
+        <li><b>Jumpy's big adventure:</b> four worlds, a world map, secret stars and the Slime King.</li>
+        <li><b>The modem</b> under the console, game controllers, a <b>LEARN</b> lesson for making your first game, and <a href="indieweb.html#lite">ADV Lite</a> that fits any website.</li>
+      </ul>
     </section>
 
     <section id="about" class="pc-only">
@@ -83,7 +96,8 @@
         <div class="lcd-row"><span data-px="2">Sound</span><span data-px="2">4 channels, 8 waves, 8 effects</span></div>
         <div class="lcd-row"><span data-px="2">Music</span><span data-px="2">64 sounds of 32 notes, 64 patterns</span></div>
         <div class="lcd-row"><span data-px="2">Code</span><span data-px="2">Lua, blocks, or the game kit</span></div>
-        <div class="lcd-row"><span data-px="2">Players</span><span data-px="2">2, six buttons each, and a mouse</span></div>
+        <div class="lcd-row"><span data-px="2">Players</span><span data-px="2">2 per ADV, up to 4 online</span></div>
+        <div class="lcd-row"><span data-px="2">Saves</span><span data-px="2">8K per game: high scores and more</span></div>
         <div class="lcd-row"><span data-px="2">Speed</span><span data-px="2">60 frames a second</span></div>
         <div class="lcd-row"><span data-px="2">Carts</span><span data-px="2">pictures (.adv), text (.advt), Lua</span></div>
         <div class="lcd-row"><span data-px="2">Runs on</span><span data-px="2">Windows, Android and the web</span></div>
@@ -92,6 +106,10 @@
       <h3 data-px="3">How it works</h3>
       <p>Every frame, sixty times a second, ADV runs your game's Lua: _update moves things about, and _draw paints the 128 x 128 screen. A little sound chip mixes four channels of triangle, square, saw, noise and more, with slides, vibrato and arpeggios. A game's sprites, map, sounds and music all live in its cart, right next to its code.</p>
       <p>To make a cart picture, ADV squashes the game, adds error correction (the same trick QR codes use, so a smudge or a wobbly photo doesn't spoil it), and paints it as squares of eight bright colors, with a color key around the edge. Reading it back finds the corner markers, even in a photo taken at an angle, and turns the colors back into the game. This web version is the very same code as the Windows and Android apps, running in your browser.</p>
+
+      <h3 data-px="3">Online play</h3>
+      <p>Up to four ADVs can play one game together: Windows, Android and the web, all mixed. In Zap Rally, Tank Duel or Blob Bump, press up on the title to host: ADV shows a code. Your friends press down in the same game and type it in, and the ADVs link up directly, player to player, through the little modem under the console. On the same Wi-Fi they find each other without a code (and the host has to let each one in).</p>
+      <p>What's shared: only button presses, sixty times a second, and a check that everyone's game still matches. No names, no chat, no pictures. To find each other, ADVs leave notes on ntfy.sh, a free public message service, locked with the code: without the code nobody can find them or read them, and ntfy.sh throws them away after a few hours. To learn its own internet address, ADV asks your router, or Google's address service if the router can't say. Like in any online game, linked ADVs can see each other's internet address, so only send your code to friends you know.</p>
     </section>
 
     <section id="word" class="pc-only">

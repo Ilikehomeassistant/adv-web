@@ -51,17 +51,20 @@
 
     <section id="lite">
       <h2><img src="icon-devcart.png" alt=""><span data-px="4">ADV Lite</span></h2>
-      <p>A little ADV handheld that lives on your page and plays ADV's online games: tap a cart and it starts. There are no editors and no saving carts to the computer: just the games. New games show up by themselves whenever someone makes one.</p>
+      <p>ADV Lite lives on your page and plays ADV's online games: on a phone it's a little ADV handheld, and on a PC with room it's the ADV console with its screen of online carts. Pick a cart and it starts. There are no editors and no saving carts to the computer: just the games. New games show up by themselves whenever someone makes one.</p>
       <div class="lite-row">
-        <iframe class="lite-preview" src="lite.html" width="320" height="600" title="ADV Lite" loading="lazy"></iframe>
+        <iframe class="lite-preview" id="lite-preview" src="lite.html" width="320" height="600" title="ADV Lite" loading="lazy"></iframe>
         <div class="lite-how">
           <h3>Copy this</h3>
+          <label class="tick"><input type="checkbox" id="lite-responsive" checked> Responsive: fits the device (the console on a PC with room, the handheld on a phone)</label>
+          <label class="tick"><input type="checkbox" id="lite-wide"> Wide (for a page with room: 880 x 660)</label>
           <div class="snippet">
             <textarea readonly rows="4" id="lite-code">&lt;iframe src="https://ilikehomeassistant.github.io/adv-web/lite.html" width="320" height="600" title="ADV Lite, a fantasy console by atomicdude" style="border: 0" loading="lazy"&gt;&lt;/iframe&gt;</textarea>
             <button class="btn loud copy" data-for="lite-code">Copy</button>
           </div>
           <h3>Good to know</h3>
           <p>Make it smaller or bigger by changing the width and height: ADV Lite fits itself into whatever space it gets. 240 x 450 is nice and small.</p>
+          <p>Responsive (on, unless you untick it): on a PC with room - 636 x 487 or more - ADV Lite looks like the ADV console with its screen of online carts; on a phone or in a small space it's the handheld. Untick it to always have the handheld (it adds <code>?responsive=false</code>).</p>
           <p>Click it first, then the arrow keys and Z / X work. On a phone, use its buttons.</p>
           <p>ADV Lite always says who made ADV underneath (that's atomicdude). Please leave that in!</p>
           <p>Want your own game in it? Make one in the <a href="devkit.html">Developer Kit</a> and send it in.</p>
@@ -82,6 +85,20 @@
   <script type="module">
     import { drawAllPixelText } from './pixelfont.js';
     drawAllPixelText();
+    // ADV Lite's paste code: responsive or not, and how big
+    const responsive = document.getElementById('lite-responsive'), wide = document.getElementById('lite-wide');
+    function liteCode() {
+      const url = 'https://ilikehomeassistant.github.io/adv-web/lite.html' + (responsive.checked ? '' : '?responsive=false');
+      const [w, h] = wide.checked ? [880, 660] : [320, 600];
+      document.getElementById('lite-code').value =
+        `<iframe src="${url}" width="${w}" height="${h}" title="ADV Lite, a fantasy console by atomicdude" style="border: 0" loading="lazy"></iframe>`;
+      const preview = document.getElementById('lite-preview');
+      preview.width = w; preview.height = h;
+      preview.src = 'lite.html' + (responsive.checked ? '' : '?responsive=false');
+    }
+    responsive.addEventListener('change', liteCode);
+    wide.addEventListener('change', liteCode);
+
     // the copy buttons: put the code on the clipboard (or select it, if the browser won't)
     for (const button of document.querySelectorAll('.copy'))
       button.addEventListener('click', async () => {

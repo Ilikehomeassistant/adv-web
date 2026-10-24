@@ -155,5 +155,13 @@ dialog small { color: var(--lit); }
 .lite-preview { border: 0; background: var(--black); box-shadow: 0 0 0 var(--px) var(--edge), 0 0 0 calc(2 * var(--px)) var(--black); max-width: 100%; }
 .lite-how { flex: 1; min-width: 280px; }
 .lite-how h3:first-child { margin-top: 0; }
+.tick { display: flex; gap: 8px; align-items: flex-start; margin: 6px 0; cursor: pointer; }
+.tick input { margin-top: 3px; accent-color: var(--yellow, #ffe14d); }
 
 @media (max-width: 900px) { header.top .say, header.top .zx { display: none; } .lcd-row { grid-template-columns: 1fr; } }
+
+/* ADV 1.0: the trailer and what's new */
+.trailer { display: block; width: 100%; max-width: 960px; aspect-ratio: 16 / 9; margin: 0 auto 20px; background: var(--black);
+           box-shadow: 0 0 0 var(--px) var(--edge), 0 0 0 calc(2 * var(--px)) var(--black); }
+.news { max-width: 960px; margin: 0 auto; padding-left: 20px; }
+.news li { margin: 8px 0; }
