@@ -112,6 +112,7 @@ section p { color: var(--pale); max-width: 860px; margin: 0 0 14px; }
 footer { border-top: var(--px) solid var(--edge); background: var(--body); }
 footer .inner { max-width: 1240px; margin: 0 auto; padding: 18px 16px; display: flex; gap: 18px; align-items: center; color: var(--lit); }
 footer .zx { width: 60px; height: 24px; margin-left: auto; }
+footer .counter { height: 20px; }
 
 /* the phone: the handheld fills the screen, with a little bar underneath */
 .phone, .phone body { overflow: hidden; height: 100%; }
